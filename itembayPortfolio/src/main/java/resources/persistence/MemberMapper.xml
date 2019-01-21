@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+	PUBLIC "-//mybatis.org//DTD Config 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.persistence.MemberMapper">
+	<resultMap id="member" type="Member" autoMapping="true">
+		<id		property="id"			column="id"				/>
+		<result property="regdate"		column="regdate"		/>
+		<result property="uemail"		column="uemail"			/>
+		<result property="uname"		column="uname"			/>
+		<result property="updatedate"	column="updatedate"		/>
+		<result property="upw"			column="upw"			/>
+        <collection property="roles"	resultMap="memberRole"/>
+	</resultMap>
+	
+    <resultMap id="memberRole" type="MemberRole">
+		<id		property="rno"			column="rno"		/>
+		<result property="roleName"		column="role_name"	/>
+		<result property="uemail"		column="uemail"		/>
+	</resultMap>
+	
+	
+	<select id="selectMemberDetail" resultMap="member">
+		/* selectMemberDetail */
+		SELECT
+			m.id
+			, m.regdate
+			, m.uemail
+			, m.uname
+			, m.updatedate
+			, m.upw
+			, mr.rno
+			, mr.role_name
+			, mr.uemail
+		FROM
+			MEMBER m LEFT OUTER JOIN MEMBER_ROLE mr 
+		ON m.id = mr.uemail
+		WHERE
+			m.uemail=#{uemail}
+	</select>
+</mapper>
