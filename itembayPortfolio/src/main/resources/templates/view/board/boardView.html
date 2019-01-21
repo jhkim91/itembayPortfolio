@@ -45,8 +45,31 @@
 							<p><i class="icon-github-alt"></i><strong>Writer:</strong> <span th:text="${board.writer}"></span></p>
 							<p><i class="icon-sitemap"></i><strong>Regdate:</strong> <span th:text="${#dates.format(board.regDate, 'yyyy-MM-dd mm:ss')}"></span></p>
 						</div>
+						
+						<!-- comment -->
+						<div id="app">
+							<div class="write">
+								<textarea v-model="memo.content"></textarea>
+								<button type="button" v-on:click="list()">목록</button>
+								<button type="button" class="save-btn" v-on:click="save()" v-bind:class="{'full' : mode === 'write'}">저장</button>
+								<button type="button" class="remove-btn" v-on:click="remove()" v-if="mode === 'edit'">삭제</button>
+								<button type="button" class="remove-btn" v-on:click="test()">memos 체크</button>
+							</div>
+							
+							<div class="list">
+								<ul>
+									<li v-for="m in memos" v-on:click="open(m.cn)" v-text="m.content"></li>
+								</ul>
+							</div>
+						
+							<script src="/assets/js/vue.js"></script>
+							<script src="http://unpkg.com/axios/dist/axios.min.js"></script>
+							<script src="/assets/js/app.js"></script>
+						</div>
+						<!-- /comment -->
 					</div>
-					<form action="#" th:action="@{/board/post/{seq}(seq=${board.seq})}" th:method="DELETE">
+					<form action="#" name="frm" th:action="@{/board/post/{seq}(seq=${board.seq})}" th:method="DELETE">
+						<input type="Text" name="seq" th:value="${board.seq}">
 						<input class="btn btn-large btn-theme" th:type="button" th:value="수정" th:onclick="'window.location.href = \'' + @{/board/post/{seq}(seq=${board.seq})} + '\''">
 						<input class="btn btn-large btn-theme" type="submit" value="삭제">
 					</form>

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<div id="app" th:fragment='commentFragment(page)'>
+		<div class="write">
+			<textarea v-model="memo.content"></textarea>
+			<button type="button" class="save-btn" v-on:click="save('[[${page}]]')" v-bind:class="{'full' : mode === 'write'}">저장</button>
+			<button type="button" class="remove-btn" v-on:click="remove()" v-if="mode === 'edit'">삭제</button>
+		</div>
+	
+		<script src="/assets/js/vue.js"></script>
+		<script src="/assets/js/app.js"></script>
+	</div>
+</html>
