@@ -4,6 +4,11 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.example.persistence.BoardMapper">
+
+    <resultMap id="boardItemCount" type="Board">
+		<result property="totalCount" 					column="total_count"					/>
+	</resultMap>
+	
 	<resultMap id="board" type="Board">
 		<id		property="seq"			column="seq"			/>
 		<result property="content"		column="content"		/>
@@ -12,9 +17,69 @@
 		<result property="uId"			column="u_id"			/>
 		<result property="updateDate"	column="update_date"	/>
 		<result property="writer"		column="writer"			/>
+		<result property="rn"			column="rn"				/>
 	</resultMap>
 	
-	<select id="selectBoardDetail" resultMap="board">
+	<resultMap id="boardShow" type="Board">
+		<id		property="seq"			column="seq"			/>
+		<result property="content"		column="content"		/>
+		<result property="regDate"		column="reg_date"		/>
+		<result property="title"		column="title"			/>
+		<result property="uId"			column="u_id"			/>
+		<result property="updateDate"	column="update_date"	/>
+		<result property="writer"		column="writer"			/>
+		<result property="rn"			column="rn"				/>
+	</resultMap>
+	
+    <select id="boardItemCount"  resultType="Integer">
+		/* boardItemCount */
+		SELECT
+			COUNT(*) AS total_count
+		FROM BOARD
+		WHERE 1=1
+			<choose>
+				<when test="(param.searchCnd == '' or param.searchCnd == null) and param.searchWrd != null and param.searchWrd != ''">
+					AND (TITLE LIKE '%' || #{param.searchWrd} || '%' OR CONTENT LIKE '%' || #{param.searchWrd} || '%')
+				</when>
+				<when test="param.searchCnd == 1 and param.searchWrd != null and param.searchWrd != ''">
+					AND TITLE LIKE '%' || #{param.searchWrd} || '%'
+				</when>
+				<when test="param.searchCnd == 2 and param.searchWrd != null and param.searchWrd != ''">
+					AND CONTENT LIKE '%' || #{param.searchWrd} || '%'
+				</when>
+			</choose>
+	</select>
+	
+	<select id="selectBoardList" resultMap="board">
+		/* selectBoardList */
+		SELECT @rownum:=@rownum+1 AS rn, result.* FROM (
+			SELECT
+				seq
+				, content
+				, reg_date
+				, title
+				, u_id
+				, update_date
+				, writer
+			FROM BOARD
+			WHERE 1=1
+				<choose>
+					<when test="(param.searchCnd == '' or param.searchCnd == null) and param.searchWrd != null and param.searchWrd != ''">
+						AND (TITLE LIKE '%' || #{param.searchWrd} || '%' OR CONTENT LIKE '%' || #{param.searchWrd} || '%')
+					</when>
+					<when test="param.searchCnd == 1 and param.searchWrd != null and param.searchWrd != ''">
+						AND TITLE LIKE '%' || #{param.searchWrd} || '%'
+					</when>
+					<when test="param.searchCnd == 2 and param.searchWrd != null and param.searchWrd != ''">
+						AND CONTENT LIKE '%' || #{param.searchWrd} || '%'
+					</when>
+				</choose>
+		) result, (SELECT @rownum:=0) R
+		order by seq desc
+		LIMIT #{page.offset}, #{page.perPage}
+	</select>
+	
+	<select id="selectBoardDetail" resultMap="boardShow">
 		/* selectBoardDetail */
 		SELECT
 			seq

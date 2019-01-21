@@ -28,4 +28,6 @@ public class Board {
 	private Date regDate;
 
 	private Date updateDate;
+	
+	private String rn;
 }
